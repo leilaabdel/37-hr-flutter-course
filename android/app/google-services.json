@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "530468062811",
+    "project_id": "mynotes-af2ad",
+    "storage_bucket": "mynotes-af2ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530468062811:android:7c9b6df990aacc83f8217e",
+        "android_client_info": {
+          "package_name": "com.leilaabdel.mynotes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530468062811-5ppvk6ohudbuo3be5i3m9rceoh5mkfi4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoy2PnVgjWdwgxFsXuSzeqsU__7oKOqkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "530468062811-5ppvk6ohudbuo3be5i3m9rceoh5mkfi4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "530468062811-rlhcrpp6qenthh1t5qmqi6dkfemjgg26.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.leilaabdel.mynotes"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
