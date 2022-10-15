@@ -35,65 +35,53 @@ class _LoginViewState extends State<LoginView> {
         appBar: AppBar(
           title: const Text("Login"),
         ),
-        body: FutureBuilder(
-          future: Firebase.initializeApp(
-              options: DefaultFirebaseOptions.currentPlatform),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: TextField(
-                        autocorrect: false,
-                        enableSuggestions: false,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(
-                            hintText: 'Please enter your email here'),
-                        controller: _email,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: TextField(
-                        enableSuggestions: false,
-                        obscureText: true,
-                        autocorrect: false,
-                        decoration: const InputDecoration(
-                            hintText: 'Please enter your password here'),
-                        controller: _password,
-                      ),
-                    ),
-                    Center(
-                      child: TextButton(
-                        onPressed: () async {
-                          print("I was pressed");
-                          final email = _email.text;
-                          final password = _password.text;
-                          try {
-                            final credentials = await FirebaseAuth.instance
-                                .signInWithEmailAndPassword(
-                                    email: email, password: password);
-                            print(credentials);
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'user-not-found') {
-                              print('User not found');
-                            } else if (e.code == 'wrong-password') {
-                              print('Wrong Password');
-                            }
-                          }
-                        },
-                        child: const Text("Login"),
-                      ),
-                    ),
-                  ],
-                );
-
-              default:
-                return const Center(child: const Text("Loading..."));
-            }
-          },
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: TextField(
+                autocorrect: false,
+                enableSuggestions: false,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                    hintText: 'Please enter your email here'),
+                controller: _email,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: TextField(
+                enableSuggestions: false,
+                obscureText: true,
+                autocorrect: false,
+                decoration: const InputDecoration(
+                    hintText: 'Please enter your password here'),
+                controller: _password,
+              ),
+            ),
+            Center(
+              child: TextButton(
+                onPressed: () async {
+                  print("I was pressed");
+                  final email = _email.text;
+                  final password = _password.text;
+                  try {
+                    final credentials = await FirebaseAuth.instance
+                        .signInWithEmailAndPassword(
+                            email: email, password: password);
+                    print(credentials);
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == 'user-not-found') {
+                      print('User not found');
+                    } else if (e.code == 'wrong-password') {
+                      print('Wrong Password');
+                    }
+                  }
+                },
+                child: const Text("Login"),
+              ),
+            ),
+          ],
         ));
   }
 }
