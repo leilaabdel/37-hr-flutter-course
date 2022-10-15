@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -57,19 +59,18 @@ class _LoginViewState extends State<LoginView> {
           Center(
             child: TextButton(
               onPressed: () async {
-                print("I was pressed");
                 final email = _email.text;
                 final password = _password.text;
                 try {
                   final credentials = await FirebaseAuth.instance
                       .signInWithEmailAndPassword(
                           email: email, password: password);
-                  print(credentials);
+                  log(credentials.toString());
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'user-not-found') {
-                    print('User not found');
+                    log('User not found');
                   } else if (e.code == 'wrong-password') {
-                    print('Wrong Password');
+                    log('Wrong Password');
                   }
                 }
               },
