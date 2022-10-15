@@ -32,57 +32,62 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Register"),
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: TextField(
-                autocorrect: false,
-                enableSuggestions: false,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                    hintText: 'Please enter your email here'),
-                controller: _email,
-              ),
+      appBar: AppBar(title: const Text("Register")),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: TextField(
+              autocorrect: false,
+              enableSuggestions: false,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                  hintText: 'Please enter your email here'),
+              controller: _email,
             ),
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: TextField(
-                enableSuggestions: false,
-                obscureText: true,
-                autocorrect: false,
-                decoration: const InputDecoration(
-                    hintText: 'Please enter your password here'),
-                controller: _password,
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: TextField(
+              enableSuggestions: false,
+              obscureText: true,
+              autocorrect: false,
+              decoration: const InputDecoration(
+                  hintText: 'Please enter your password here'),
+              controller: _password,
             ),
-            Center(
-              child: TextButton(
-                onPressed: () async {
-                  final email = _email.text;
-                  final password = _password.text;
-                  try {
-                    final userCredential = await FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
-                            email: email, password: password);
-                    print(userCredential);
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == 'weak-password') {
-                      print('Weak Password');
-                    } else if (e.code == 'email-already-in-use') {
-                      print('Email already in use');
-                    } else if (e.code == 'invalid-email') {
-                      print('Invalid email');
-                    }
+          ),
+          Center(
+            child: TextButton(
+              onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
+                try {
+                  final userCredential = await FirebaseAuth.instance
+                      .createUserWithEmailAndPassword(
+                          email: email, password: password);
+                  print(userCredential);
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'weak-password') {
+                    print('Weak Password');
+                  } else if (e.code == 'email-already-in-use') {
+                    print('Email already in use');
+                  } else if (e.code == 'invalid-email') {
+                    print('Invalid email');
                   }
-                },
-                child: const Text("Register"),
-              ),
+                }
+              },
+              child: const Text("Register"),
             ),
-          ],
-        ));
+          ),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/login/', (route) => false);
+              },
+              child: const Text("Registered? Login Here"))
+        ],
+      ),
+    );
   }
 }

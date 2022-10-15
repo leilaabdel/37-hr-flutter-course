@@ -14,5 +14,9 @@ void main() {
       primarySwatch: Colors.blue,
     ),
     home: const HomeView(),
+    routes: {
+      '/login/': ((context) => const LoginView()),
+      '/register/': (context) => const RegisterView()
+    },
   ));
 }
