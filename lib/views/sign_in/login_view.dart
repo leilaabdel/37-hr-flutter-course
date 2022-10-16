@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/helpers/error_alert.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -66,12 +68,31 @@ class _LoginViewState extends State<LoginView> {
                       .signInWithEmailAndPassword(
                           email: email, password: password);
                   log(credentials.toString());
+                  if (credentials.user?.emailVerified ?? false) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      notesRoute,
+                      (route) => false,
+                    );
+                  } else {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      verifyEmailRoute,
+                      (route) => false,
+                    );
+                  }
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'user-not-found') {
+                    showErrorDialog(context, 'User not found');
                     log('User not found');
                   } else if (e.code == 'wrong-password') {
                     log('Wrong Password');
+                    showErrorDialog(context, 'Wrong Password');
+                  } else {
+                    log(e.code);
+                    showErrorDialog(context, 'Error: ${e.code}');
                   }
+                } catch (e) {
+                  log(e.toString());
+                  showErrorDialog(context, 'Error: ${e.toString()}');
                 }
               },
               child: const Text("Login"),
@@ -80,7 +101,7 @@ class _LoginViewState extends State<LoginView> {
           TextButton(
               onPressed: () {
                 Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/register/', (route) => false);
+                    .pushNamedAndRemoveUntil(registerRoute, (route) => false);
               },
               child: const Text("Not Registered Yet? Register Here"))
         ],
