@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/views/notes/notes_view.dart';
+import 'package:mynotes/views/sign_in/login_view.dart';
 import 'package:mynotes/views/sign_in/register_view.dart';
 import 'package:mynotes/views/sign_in/verify_email_view.dart';
 import '../../firebase_options.dart';
@@ -28,13 +29,8 @@ class HomeView extends StatelessWidget {
                   return const VerifyEmailView();
                 }
               } else {
-                return const RegisterView();
+                return const LoginView();
               }
-            // if (user?.emailVerified ?? false) {
-            //   return const Text("Done");
-            // } else {
-            //   return RegisterView();
-            // }
             default:
               return const CircularProgressIndicator();
           }
