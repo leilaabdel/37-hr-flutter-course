@@ -66,17 +66,10 @@ class _LoginViewState extends State<LoginView> {
                   await AuthService.firebase()
                       .login(email: email, password: password);
                   final user = AuthService.firebase().currentUser;
-                  if (user?.isEmailVerified ?? false) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      notesRoute,
-                      (route) => false,
-                    );
-                  } else {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      verifyEmailRoute,
-                      (route) => false,
-                    );
-                  }
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    notesRoute,
+                    (route) => false,
+                  );
                 } on UserNotFoundAuthException {
                   showErrorDialog(context, 'User not found');
                 } on WrongPasswordAuthException {

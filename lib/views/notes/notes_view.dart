@@ -3,6 +3,7 @@ import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 
 import '../../enums/menu_action.dart';
+import '../../services/crud/notes_service.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -12,6 +13,21 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
+  String get userEmail => AuthService.firebase().currentUser!.email!;
+  late final NotesService _notesService;
+  @override
+  void initState() {
+    _notesService = NotesService();
+    _notesService.open();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _notesService.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +56,33 @@ class _NotesViewState extends State<NotesView> {
             )
           ],
         ),
-        body: const Text('Hello World'));
+        body: Center(
+          child: Column(
+            children: [
+              Spacer(),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: const StadiumBorder(),
+                ),
+                child: const Text('Supplies'),
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    suppliesLandingRoute,
+                    (route) => false,
+                  );
+                },
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: const StadiumBorder(),
+                ),
+                child: const Text('Patients'),
+                onPressed: () {},
+              ),
+              Spacer()
+            ],
+          ),
+        ));
   }
 }
 
