@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/helpers/error_alert.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/services/crud/notes_service.dart';
+import 'package:mynotes/views/notes/supply_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -14,11 +17,13 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
-
+  late final NotesService _notesService;
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+    print("opening the DB");
+    NotesService().open();
     super.initState();
   }
 
@@ -26,6 +31,7 @@ class _LoginViewState extends State<LoginView> {
   void dispose() {
     _email.dispose();
     _password.dispose();
+    NotesService().close();
     super.dispose();
   }
 
@@ -66,6 +72,22 @@ class _LoginViewState extends State<LoginView> {
                   await AuthService.firebase()
                       .login(email: email, password: password);
                   final user = AuthService.firebase().currentUser;
+
+                  // Save firestore data to database
+                  final streams = await FirebaseFirestore.instance
+                      .collection('items')
+                      .get();
+
+                  final records = streams.docs
+                      .map((e) =>
+                          ItemRecord.fromMap(e.data(), reference: e.reference))
+                      .toList();
+
+                  records.forEach(
+                    (element) =>
+                        NotesService().createClinicItem(record: element),
+                  );
+
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     notesRoute,
                     (route) => false,

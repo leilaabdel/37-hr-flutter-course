@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/services/crud/notes_service.dart';
 
 class SupplyView extends StatefulWidget {
   const SupplyView({super.key});
@@ -20,29 +22,27 @@ class _SupplyViewState extends State<SupplyView> {
   }
 
   Widget _buildBody(BuildContext context) {
+    print(NotesService().allClinicItems);
     // TODO: get actual snapshot from Cloud Firestore
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('items').snapshots(),
+    return StreamBuilder(
+      stream: NotesService().allClinicItems,
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
-
-        return _buildList(context, snapshot.data!.docs);
+        return _buildList(context, snapshot.data!);
       },
     );
   }
 
-  Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+  Widget _buildList(BuildContext context, List<ClinicItem> snapshot) {
     return ListView(
       padding: const EdgeInsets.only(top: 20.0),
       children: snapshot.map((data) => _buildListItem(context, data)).toList(),
     );
   }
 
-  Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    final record = ItemRecord.fromSnapshot(data);
-
+  Widget _buildListItem(BuildContext context, ClinicItem data) {
     return Padding(
-      key: ValueKey(record.itemName),
+      key: ValueKey(data.itemName),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Container(
         decoration: BoxDecoration(
@@ -50,10 +50,13 @@ class _SupplyViewState extends State<SupplyView> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: ListTile(
-          title: Text(record.itemName),
-          trailing: Text(record.amount.toString()),
-          onTap: () => print(record),
-        ),
+            title: Text(data.itemName),
+            trailing: Text(data.amount.toString()),
+            onTap: () {
+              print(data);
+              Navigator.of(context)
+                  .pushNamed(specificSupplyItemRoute, arguments: data);
+            }),
       ),
     );
   }
@@ -81,7 +84,7 @@ class ItemRecord {
         size = map['size'],
         transfemoral = map['transfemoral'],
         transtibial = map['transtibial'],
-        useage = map['usage'];
+        useage = map['useage'];
 
   ItemRecord.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data() as Map<String, dynamic>,

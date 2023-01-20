@@ -32,7 +32,7 @@ class _NotesViewState extends State<NotesView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Main UI'),
+          title: const Text('Landing'),
           actions: [
             PopupMenuButton<MenuAction>(
               onSelected: (value) async {
@@ -66,12 +66,10 @@ class _NotesViewState extends State<NotesView> {
                 ),
                 child: const Text('Supplies'),
                 onPressed: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    suppliesLandingRoute,
-                    (route) => false,
-                  );
+                  Navigator.of(context).pushNamed(suppliesLandingRoute);
                 },
               ),
+              Spacer(),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   shape: const StadiumBorder(),

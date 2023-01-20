@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/views/notes/supply_view.dart';
@@ -11,12 +12,25 @@ import 'crud_exceptions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotesService {
+  static final NotesService _shared = NotesService._sharedInstance();
+  NotesService._sharedInstance() {
+    _clinicItemStreamController = StreamController<List<ClinicItem>>.broadcast(
+      onListen: () {
+        _clinicItemStreamController.sink.add(_clinicItems);
+      },
+    );
+  }
+
+  factory NotesService() => _shared;
+
   Database? _db;
 
   List<ClinicItem> _clinicItems = [];
 
-  final _clinicItemStreamController =
-      StreamController<List<ClinicItem>>.broadcast();
+  late final StreamController<List<ClinicItem>> _clinicItemStreamController;
+
+  Stream<List<ClinicItem>> get allClinicItems =>
+      _clinicItemStreamController.stream;
 
   Future<DatabaseUser> getOrCreateUser({required String email}) async {
     try {
@@ -31,24 +45,31 @@ class NotesService {
   }
 
   Future<void> _catchClinicItems() async {
-    final allNotes = await getAllClinicItems();
-    _clinicItems = allNotes.toList();
+    log("(**** CACHING ****");
+    final allClinicItems = await getAllClinicItems();
+    log("ALL ITEMS: $allClinicItems");
+    _clinicItems = allClinicItems.toList();
     _clinicItemStreamController.add(_clinicItems);
   }
 
   Future<ClinicItem> createClinicItem({required ItemRecord record}) async {
+    _ensureDBIsOpen();
     final db = _getDatabaseOrThrow();
+    print("Creating item");
 
     // create the item
     final itemId = await db.insert(clinicItemTable, {
       idColumn: record.id,
       itemNameColumn: record.itemName,
+      amountColumn: record.amount,
       replacementFrequencuColumn: record.replacementFrequency,
       sizeColumn: record.size,
       transfemoralColumn: record.transfemoral ? 1 : 0,
       transtibialColumn: record.transtibial ? 1 : 0,
       usageColumn: record.useage
     });
+
+    log(itemId.toString());
 
     final databaseClinicItem = ClinicItem(
         id: record.id,
@@ -85,6 +106,7 @@ class NotesService {
   // }
 
   Future<ClinicItem> getItem({required String id}) async {
+    _ensureDBIsOpen();
     final db = _getDatabaseOrThrow();
     final clinicItems = await db.query(clinicItemTable,
         where: 'id = ?', whereArgs: [id], limit: 1);
@@ -103,6 +125,7 @@ class NotesService {
     required ClinicItem item,
     required String text,
   }) async {
+    await _ensureDBIsOpen();
     final db = _getDatabaseOrThrow();
     await getItem(id: item.id);
 
@@ -127,9 +150,11 @@ class NotesService {
   }
 
   Future<Iterable<ClinicItem>> getAllClinicItems() async {
+    await _ensureDBIsOpen();
     final db = _getDatabaseOrThrow();
     final items = await db.query(clinicItemTable);
     final result = items.map((itemRow) => ClinicItem.fromRow(itemRow));
+    log("MAPPED RESULTS $result");
     return result;
   }
 
@@ -180,6 +205,7 @@ class NotesService {
 
   Database _getDatabaseOrThrow() {
     final db = _db;
+    log("INTERNAL DB IS $db");
     if (db == null) {
       throw DatabaseIsNotOpen();
     } else {
@@ -202,6 +228,7 @@ class NotesService {
       final dbPath = join(docsPath.path, dbName);
       final db = await openDatabase(dbPath);
       _db = db;
+      log("DB IS $_db");
 
       //create the user table
       // await db.execute(createUserTable);
@@ -301,10 +328,10 @@ class ClinicItem {
         amount = map[amountColumn] as int,
         itemName = map[itemNameColumn] as String,
         replacementFrequency = map[replacementFrequencuColumn] as int,
-        size = map[sizeColumn] as String,
+        size = map[sizeColumn] as String?,
         transfemoral = (map[transfemoralColumn] as int) == 1 ? true : false,
         transtibial = (map[transtibialColumn] as int) == 1 ? true : false,
-        useage = map[usageColumn] as String;
+        useage = map[usageColumn] as String?;
 
   @override
   String toString() =>
@@ -317,7 +344,7 @@ class ClinicItem {
   int get hashCode => id.hashCode;
 }
 
-const dbName = 'notes.db';
+const dbName = 'ghopsItems.db';
 const noteTable = 'note';
 const clinicItemTable = 'items';
 const userTable = 'user';
@@ -331,7 +358,7 @@ const replacementFrequencuColumn = 'replacement_frequency';
 const sizeColumn = 'size';
 const transfemoralColumn = 'transfemoral';
 const transtibialColumn = 'transtibial';
-const usageColumn = 'usage';
+const usageColumn = 'useage';
 
 const isSyncedWithCloudColumn = 'is_synced_with_cloud';
 
@@ -351,10 +378,11 @@ const createNoteTable = '''CREATE TABLE IF NOT EXISTS "note" (
 
 const createItemTable = '''CREATE TABLE IF NOT EXISTS "items" (
 	"id"	TEXT NOT NULL UNIQUE,
-	"amount"	INTEGER NOT NULL,
+	"amount"	INTEGER,
 	"item_name"	TEXT,
 	"size"	TEXT,
+  "replacement_frequency"  INTEGER,
 	"transfemoral"	INTEGER,
 	"transtibial"	INTEGER,
-	"part"	TEXT NOT NULL
+	"useage"	TEXT
 );''';
