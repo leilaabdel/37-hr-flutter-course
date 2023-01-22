@@ -26,6 +26,7 @@ class _PatientViewState extends State<PatientView> {
             onSelected: (value) async {
               switch (value) {
                 case PatientMenuAction.addNewPatient:
+                  Navigator.of(context).pushNamed(newPatientFormRoute);
                   break;
               }
             },

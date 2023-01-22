@@ -6,3 +6,4 @@ const patientsLandingRoute = '/patientsLanding';
 const suppliesLandingRoute = '/suppliesLanding';
 const specificSupplyItemRoute = '/specificItem';
 const specificPatientItemRoute = '/specificPatient';
+const newPatientFormRoute = '/newPatient';
