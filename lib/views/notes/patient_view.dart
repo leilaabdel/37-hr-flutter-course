@@ -101,6 +101,7 @@ class PatientCloudRecord {
   final String? next_of_kin;
   final String? place_of_birth;
   final String? religion;
+  final String? sex;
   final DocumentReference reference;
 
   PatientCloudRecord.fromMap(Map<String, dynamic> map,
@@ -121,6 +122,7 @@ class PatientCloudRecord {
         marital_status = map['marital_status'],
         next_of_kin = map['next_of_kin'],
         place_of_birth = map['place_of_birth'],
+        sex = map['gender'],
         religion = map['religion'];
 
   PatientCloudRecord.fromSnapshot(DocumentSnapshot snapshot)

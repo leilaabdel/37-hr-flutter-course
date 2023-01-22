@@ -66,7 +66,8 @@ class PatientService {
       occupationColumn: record.occupation,
       placeOfBirthColumn: record.place_of_birth,
       religionColumn: record.religion,
-      surnameColumn: record.surname
+      surnameColumn: record.surname,
+      sexColumn: record.sex
     });
 
     log(patientId.toString());
@@ -87,6 +88,7 @@ class PatientService {
       place_of_birth: record.place_of_birth,
       religion: record.religion,
       surname: record.surname,
+      sex: record.sex,
     );
 
     _patientRecords.add(databasePatientRecord);
@@ -176,24 +178,25 @@ class PatientRecord {
   final String? next_of_kin;
   final String? place_of_birth;
   final String? religion;
+  final String? sex;
 
-  PatientRecord({
-    required this.id,
-    required this.address_1,
-    required this.address_2,
-    required this.address_of_next_of_kin,
-    required this.age,
-    required this.contact,
-    required this.date_of_first_attendance,
-    required this.dob,
-    required this.first_name,
-    required this.surname,
-    required this.occupation,
-    required this.marital_status,
-    required this.next_of_kin,
-    required this.place_of_birth,
-    required this.religion,
-  });
+  PatientRecord(
+      {required this.id,
+      required this.address_1,
+      required this.address_2,
+      required this.address_of_next_of_kin,
+      required this.age,
+      required this.contact,
+      required this.date_of_first_attendance,
+      required this.dob,
+      required this.first_name,
+      required this.surname,
+      required this.occupation,
+      required this.marital_status,
+      required this.next_of_kin,
+      required this.place_of_birth,
+      required this.religion,
+      required this.sex});
 
   PatientRecord.fromRow(Map<String, Object?> map)
       : id = map[idColumn] as String,
@@ -213,7 +216,8 @@ class PatientRecord {
         marital_status = map[maritalStatusColumn] as String?,
         next_of_kin = map[nextOfKinColumn] as String?,
         place_of_birth = map[placeOfBirthColumn] as String?,
-        religion = map[religionColumn] as String?;
+        religion = map[religionColumn] as String?,
+        sex = map[sexColumn] as String?;
 
   @override
   String toString() => 'Note, ID = $id, firstName = $first_name, id =  $id';
@@ -242,6 +246,7 @@ const occupationColumn = 'occupation';
 const placeOfBirthColumn = 'place_of_birth';
 const religionColumn = 'religion';
 const surnameColumn = 'surname';
+const sexColumn = 'sex';
 
 const createPatientsTable = '''CREATE TABLE IF NOT EXISTS "patients" (
 	"address_1"	TEXT,
@@ -256,7 +261,8 @@ const createPatientsTable = '''CREATE TABLE IF NOT EXISTS "patients" (
 	"marital_status"	TEXT,
 	"next_of_kin"	TEXT,
 	"occupation"	TEXT,
-	"place_of_birth"	TEXT,
+	"place_of_birth"  TEXT,
 	"religion"	TEXT,
-	"surname"	TEXT
+	"surname" TEXT,
+  "sex" TEXT
 );''';
