@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mynotes/services/crud/database_service.dart';
 import 'package:mynotes/views/notes/supply_view.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart'
@@ -47,7 +48,8 @@ class NotesService {
   Future<void> _catchClinicItems() async {
     log("(**** CACHING ****");
     final allClinicItems = await getAllClinicItems();
-    log("ALL ITEMS: $allClinicItems");
+    var count = allClinicItems.length;
+    log("ALL ITEMS: $count");
     _clinicItems = allClinicItems.toList();
     _clinicItemStreamController.add(_clinicItems);
   }
@@ -154,7 +156,7 @@ class NotesService {
     final db = _getDatabaseOrThrow();
     final items = await db.query(clinicItemTable);
     final result = items.map((itemRow) => ClinicItem.fromRow(itemRow));
-    log("MAPPED RESULTS $result");
+    //log("MAPPED RESULTS $result");
     return result;
   }
 

@@ -75,7 +75,9 @@ class _NotesViewState extends State<NotesView> {
                   shape: const StadiumBorder(),
                 ),
                 child: const Text('Patients'),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pushNamed(patientsLandingRoute);
+                },
               ),
               Spacer()
             ],

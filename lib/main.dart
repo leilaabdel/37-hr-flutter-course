@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/views/notes/item_view.dart';
 import 'package:mynotes/views/notes/notes_view.dart';
+import 'package:mynotes/views/notes/patient_view.dart';
 import 'package:mynotes/views/notes/supply_view.dart';
 import 'package:mynotes/views/sign_in/home_view.dart';
 import 'package:mynotes/views/sign_in/login_view.dart';
@@ -24,6 +25,7 @@ void main() {
       notesRoute: (context) => const NotesView(),
       verifyEmailRoute: (context) => const VerifyEmailView(),
       suppliesLandingRoute: (context) => const SupplyView(),
+      patientsLandingRoute: (context) => const PatientView(),
     },
     onGenerateRoute: router.generateRoute,
   ));

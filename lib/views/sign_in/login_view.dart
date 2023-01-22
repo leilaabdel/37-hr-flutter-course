@@ -5,6 +5,8 @@ import 'package:mynotes/helpers/error_alert.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/crud/notes_service.dart';
+import 'package:mynotes/services/crud/patient_service.dart';
+import 'package:mynotes/views/notes/patient_view.dart';
 import 'package:mynotes/views/notes/supply_view.dart';
 
 class LoginView extends StatefulWidget {
@@ -17,13 +19,12 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
-  late final NotesService _notesService;
+
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
     print("opening the DB");
-    NotesService().open();
     super.initState();
   }
 
@@ -32,6 +33,7 @@ class _LoginViewState extends State<LoginView> {
     _email.dispose();
     _password.dispose();
     NotesService().close();
+    PatientService().close();
     super.dispose();
   }
 
@@ -73,9 +75,15 @@ class _LoginViewState extends State<LoginView> {
                       .login(email: email, password: password);
                   final user = AuthService.firebase().currentUser;
 
+                  PatientService().open();
+                  NotesService().open();
+
                   // Save firestore data to database
                   final streams = await FirebaseFirestore.instance
                       .collection('items')
+                      .get();
+                  final patientStreams = await FirebaseFirestore.instance
+                      .collection('patients')
                       .get();
 
                   final records = streams.docs
@@ -83,10 +91,21 @@ class _LoginViewState extends State<LoginView> {
                           ItemRecord.fromMap(e.data(), reference: e.reference))
                       .toList();
 
-                  records.forEach(
-                    (element) =>
-                        NotesService().createClinicItem(record: element),
-                  );
+                  final patientRecords = patientStreams.docs
+                      .map((e) => PatientCloudRecord.fromMap(e.data(),
+                          reference: e.reference))
+                      .toList();
+
+                  var len = records.length;
+                  print("RECORDS LENGTH $len");
+
+                  for (var element in patientRecords) {
+                    PatientService().createPatientRecord(record: element);
+                  }
+
+                  for (var element in records) {
+                    NotesService().createClinicItem(record: element);
+                  }
 
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     notesRoute,
