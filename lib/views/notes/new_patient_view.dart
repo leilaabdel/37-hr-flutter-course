@@ -1,7 +1,10 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mynotes/services/crud/patient_service.dart';
+import 'package:mynotes/views/notes/patient_view.dart';
 
 // Create a Form widget.
 class NewPatientFrom extends StatefulWidget {
@@ -40,6 +43,40 @@ class NewPatientFromState extends State<NewPatientFrom> {
 
   TextEditingController dobInput = TextEditingController();
   TextEditingController dateOfFirstVisitInput = TextEditingController();
+
+  var dobDate = DateTime.now();
+  var dateOfFirstVisit = DateTime.now();
+
+  @override
+  void initState() {
+    PatientService().open();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    surName.dispose();
+    firstName.dispose();
+    address1.dispose();
+    address2.dispose();
+    occupation.dispose();
+    maritalStatus.dispose();
+    dob.dispose();
+    age.dispose();
+    placeOfBirth.dispose();
+    tribe.dispose();
+    patientContact.dispose();
+    religion.dispose();
+    nextOfKin.dispose();
+    addressOfNextofKin.dispose();
+    dobInput.dispose();
+    dateOfFirstVisitInput.dispose();
+
+    sex.dispose();
+    PatientService().close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,9 +201,6 @@ class NewPatientFromState extends State<NewPatientFrom> {
                     ),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
                       return null;
                     },
                   ),
@@ -187,9 +221,6 @@ class NewPatientFromState extends State<NewPatientFrom> {
                     ),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
                       return null;
                     },
                   ),
@@ -241,6 +272,7 @@ class NewPatientFromState extends State<NewPatientFrom> {
                           lastDate: DateTime(2101));
 
                       if (pickedDate != null) {
+                        dobDate = pickedDate;
                         print(
                             pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                         String formattedDate =
@@ -328,9 +360,6 @@ class NewPatientFromState extends State<NewPatientFrom> {
                     ),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
                       return null;
                     },
                   ),
@@ -351,9 +380,6 @@ class NewPatientFromState extends State<NewPatientFrom> {
                     ),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
                       return null;
                     },
                   ),
@@ -374,9 +400,6 @@ class NewPatientFromState extends State<NewPatientFrom> {
                     ),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
                       return null;
                     },
                   ),
@@ -405,6 +428,7 @@ class NewPatientFromState extends State<NewPatientFrom> {
                           lastDate: DateTime(2101));
 
                       if (pickedDate != null) {
+                        dateOfFirstVisit = pickedDate;
                         print(
                             pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                         String formattedDate =
@@ -446,9 +470,6 @@ class NewPatientFromState extends State<NewPatientFrom> {
                     ),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
                       return null;
                     },
                   ),
@@ -469,9 +490,6 @@ class NewPatientFromState extends State<NewPatientFrom> {
                     ),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
                       return null;
                     },
                   ),
@@ -479,9 +497,30 @@ class NewPatientFromState extends State<NewPatientFrom> {
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: ElevatedButton(
                       onPressed: () {
-                        log(surName.text);
                         // Validate returns true if the form is valid, or false otherwise.
                         if (_formKey.currentState!.validate()) {
+                          var rng = new Random();
+                          var code = rng.nextInt(9000000) + 1000000;
+                          var patient = PatientCloudRecord(
+                            id: code.toString(),
+                            address_1: address1.text,
+                            address_2: address2.text,
+                            address_of_next_of_kin: addressOfNextofKin.text,
+                            age: int.parse(age.text),
+                            contact: patientContact.text,
+                            date_of_first_attendance: dateOfFirstVisit,
+                            dob: dobDate,
+                            first_name: firstName.text,
+                            surname: surName.text,
+                            occupation: occupation.text,
+                            marital_status: maritalStatus.text,
+                            next_of_kin: nextOfKin.text,
+                            place_of_birth: placeOfBirth.text,
+                            religion: religion.text,
+                            sex: sex.text,
+                          );
+                          PatientService().createPatientRecord(record: patient);
+
                           // If the form is valid, display a snackbar. In the real world,
                           // you'd often call a server or save the information in a database.
                           ScaffoldMessenger.of(context).showSnackBar(

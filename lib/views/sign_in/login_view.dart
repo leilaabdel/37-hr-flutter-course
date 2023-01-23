@@ -92,8 +92,7 @@ class _LoginViewState extends State<LoginView> {
                       .toList();
 
                   final patientRecords = patientStreams.docs
-                      .map((e) => PatientCloudRecord.fromMap(e.data(),
-                          reference: e.reference))
+                      .map((e) => PatientCloudRecord.fromMap(e.data()))
                       .toList();
 
                   var len = records.length;

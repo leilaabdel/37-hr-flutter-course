@@ -102,13 +102,30 @@ class PatientCloudRecord {
   final String? place_of_birth;
   final String? religion;
   final String? sex;
-  final DocumentReference reference;
 
-  PatientCloudRecord.fromMap(Map<String, dynamic> map,
-      {required this.reference})
+  PatientCloudRecord({
+    required this.id,
+    required this.address_1,
+    required this.address_2,
+    required this.address_of_next_of_kin,
+    required this.age,
+    required this.contact,
+    required this.date_of_first_attendance,
+    required this.dob,
+    required this.first_name,
+    required this.surname,
+    required this.occupation,
+    required this.marital_status,
+    required this.next_of_kin,
+    required this.place_of_birth,
+    required this.religion,
+    required this.sex,
+  });
+
+  PatientCloudRecord.fromMap(Map<String, dynamic> map)
       : assert(map['id'] != null),
         assert(map['first_name'] != null),
-        id = reference.id,
+        id = map['id'],
         address_1 = map['address_1'],
         address_2 = map['address_2'],
         address_of_next_of_kin = map['address_of_next_of_kin'],
@@ -126,8 +143,7 @@ class PatientCloudRecord {
         religion = map['religion'];
 
   PatientCloudRecord.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data() as Map<String, dynamic>,
-            reference: snapshot.reference);
+      : this.fromMap(snapshot.data() as Map<String, dynamic>);
 
   @override
   String toString() => "Record<$first_name:$surname>";
