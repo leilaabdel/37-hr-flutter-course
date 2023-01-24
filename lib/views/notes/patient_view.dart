@@ -139,11 +139,30 @@ class PatientCloudRecord {
         marital_status = map['marital_status'],
         next_of_kin = map['next_of_kin'],
         place_of_birth = map['place_of_birth'],
-        sex = map['gender'],
+        sex = map['sex'],
         religion = map['religion'];
 
   PatientCloudRecord.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data() as Map<String, dynamic>);
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'address_1': address_1,
+        'address_2': address_2,
+        'address_of_next_of_kin': address_of_next_of_kin,
+        'age': age,
+        'contact': contact,
+        'date_of_first_attendance': date_of_first_attendance,
+        'dob': dob,
+        'first_name': first_name,
+        'surname': surname,
+        'occupation': occupation,
+        'marital_status': marital_status,
+        'next_of_kin': next_of_kin,
+        'place_of_birth': place_of_birth,
+        'sex': sex,
+        'religion': religion,
+      };
 
   @override
   String toString() => "Record<$first_name:$surname>";

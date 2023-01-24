@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mynotes/services/crud/patient_service.dart';
 import 'package:mynotes/views/notes/patient_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Create a Form widget.
 class NewPatientFrom extends StatefulWidget {
@@ -520,6 +521,8 @@ class NewPatientFromState extends State<NewPatientFrom> {
                             sex: sex.text,
                           );
                           PatientService().createPatientRecord(record: patient);
+                          PatientService()
+                              .writeToFireStore(patientDoc: patient);
 
                           // If the form is valid, display a snackbar. In the real world,
                           // you'd often call a server or save the information in a database.

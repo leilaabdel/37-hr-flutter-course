@@ -131,6 +131,13 @@ class PatientService {
     }
   }
 
+  Future<void> writeToFireStore(
+      {required PatientCloudRecord patientDoc}) async {
+    DocumentReference ref =
+        FirebaseFirestore.instance.collection('patients').doc(patientDoc.id);
+    await ref.set(patientDoc.toJson());
+  }
+
   Future<void> _ensureDBIsOpen() async {
     try {
       await open();
