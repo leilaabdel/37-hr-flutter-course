@@ -15,7 +15,6 @@ class PatientView extends StatefulWidget {
 }
 
 class _PatientViewState extends State<PatientView> {
-  bool _searchBoolean = false; //ad
   TextEditingController _controller = TextEditingController();
   String searchText = "";
 
@@ -74,7 +73,8 @@ class _PatientViewState extends State<PatientView> {
                 element.surname
                     .toString()
                     .toLowerCase()
-                    .contains(searchText.toLowerCase());
+                    .contains(searchText.toLowerCase()) ||
+                element.id.toString().contains(searchText);
           }).toList();
         }
         return Column(
@@ -94,7 +94,7 @@ class _PatientViewState extends State<PatientView> {
                 controller: _controller,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.search),
-                  hintText: "Enter Patient Name",
+                  hintText: "Enter Patient Info",
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20)),
                 ),

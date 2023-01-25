@@ -13,6 +13,9 @@ class SupplyView extends StatefulWidget {
 }
 
 class _SupplyViewState extends State<SupplyView> {
+  TextEditingController _controller = TextEditingController();
+  String searchText = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +31,45 @@ class _SupplyViewState extends State<SupplyView> {
       stream: NotesService().allClinicItems,
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
-        return _buildList(context, snapshot.data!);
+        var documents = snapshot.data!;
+        if (searchText.length > 0) {
+          documents = documents.where((element) {
+            return element.itemName
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchText.toLowerCase()) ||
+                element.id
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchText.toLowerCase());
+          }).toList();
+        }
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    searchText = value;
+                  });
+                },
+                controller: _controller,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  hintText: "Enter Document Info",
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+              ),
+            ),
+            Expanded(child: _buildList(context, documents)),
+          ],
+        );
       },
     );
   }
@@ -42,7 +83,7 @@ class _SupplyViewState extends State<SupplyView> {
 
   Widget _buildListItem(BuildContext context, ClinicItem data) {
     return Padding(
-      key: ValueKey(data.itemName),
+      key: ValueKey(data.id),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Container(
         decoration: BoxDecoration(
