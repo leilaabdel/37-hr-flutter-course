@@ -1,3 +1,3 @@
 enum MenuAction { logout }
 
-enum PatientMenuAction { addNewPatient }
+enum PatientMenuAction { addNewPatient, searchPatients }

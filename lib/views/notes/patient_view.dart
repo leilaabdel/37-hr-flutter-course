@@ -15,6 +15,10 @@ class PatientView extends StatefulWidget {
 }
 
 class _PatientViewState extends State<PatientView> {
+  bool _searchBoolean = false; //ad
+  TextEditingController _controller = TextEditingController();
+  String searchText = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,13 +32,22 @@ class _PatientViewState extends State<PatientView> {
                 case PatientMenuAction.addNewPatient:
                   Navigator.of(context).pushNamed(newPatientFormRoute);
                   break;
+                case PatientMenuAction.searchPatients:
+                  break;
               }
             },
             itemBuilder: (context) {
               return const [
                 PopupMenuItem<PatientMenuAction>(
                     value: PatientMenuAction.addNewPatient,
-                    child: Text('Add New'))
+                    child: Text('Add New')),
+                PopupMenuItem<PatientMenuAction>(
+                  value: PatientMenuAction.searchPatients,
+                  child: Icon(
+                    Icons.search,
+                    color: Colors.black,
+                  ),
+                )
               ];
             },
           )
@@ -45,13 +58,51 @@ class _PatientViewState extends State<PatientView> {
   }
 
   Widget _buildBody(BuildContext context) {
-    print(PatientService().allPatientRecords);
     // TODO: get actual snapshot from Cloud Firestore
     return StreamBuilder(
       stream: PatientService().allPatientRecords,
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
-        return _buildList(context, snapshot.data!);
+        var documents = snapshot.data!;
+        //todo Documents list added to filterTitle
+        if (searchText.length > 0) {
+          documents = documents.where((element) {
+            return element.first_name
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchText.toLowerCase()) ||
+                element.surname
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchText.toLowerCase());
+          }).toList();
+        }
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    searchText = value;
+                  });
+                },
+                controller: _controller,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  hintText: "Enter Patient Name",
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+              ),
+            ),
+            Expanded(child: _buildList(context, documents)),
+          ],
+        );
       },
     );
   }
@@ -73,7 +124,7 @@ class _PatientViewState extends State<PatientView> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: ListTile(
-            title: Text(data.first_name),
+            title: Text("${data.first_name} ${data.surname}"),
             trailing: Text(data.id.toString()),
             onTap: () {
               print(data);
