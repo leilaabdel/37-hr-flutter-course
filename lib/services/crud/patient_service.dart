@@ -32,6 +32,47 @@ class PatientService {
   late final StreamController<List<PatientRecord>>
       _patientRecordsStreamController;
 
+  Future<PatientRecord> updateNote({
+    required PatientRecord patient,
+  }) async {
+    await _ensureDBIsOpen();
+    final db = _getDatabaseOrThrow();
+    await getItem(id: patient.id);
+
+    final updatesCount = await db.update(
+        patientRecordsTable,
+        {
+          address1Column: patient.address_1,
+          address2Column: patient.address_2,
+          addressOfNextOfKinColumn: patient.address_of_next_of_kin,
+          ageColumn: patient.age,
+          contactColumn: patient.contact,
+          dateOfFirstAttendanceColumn:
+              patient.date_of_first_attendance?.microsecondsSinceEpoch,
+          dobColumn: patient.dob?.microsecondsSinceEpoch,
+          firstNameColumn: patient.first_name,
+          surnameColumn: patient.surname,
+          occupationColumn: patient.occupation,
+          maritalStatusColumn: patient.marital_status,
+          nextOfKinColumn: patient.next_of_kin,
+          placeOfBirthColumn: patient.place_of_birth,
+          religionColumn: patient.place_of_birth,
+          sexColumn: patient.sex
+        },
+        where: 'id = ?',
+        whereArgs: [patient.id]);
+
+    if (updatesCount == 0) {
+      throw CouldNotUpdateNote();
+    } else {
+      final updatedItem = await getItem(id: patient.id);
+      _patientRecords.removeWhere((item) => item.id == updatedItem.id);
+      _patientRecords.add(updatedItem);
+      _patientRecordsStreamController.add(_patientRecords);
+      return updatedItem;
+    }
+  }
+
   Stream<List<PatientRecord>> get allPatientRecords =>
       _patientRecordsStreamController.stream;
 

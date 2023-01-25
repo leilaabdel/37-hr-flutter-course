@@ -2,22 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:mynotes/services/crud/notes_service.dart';
+import 'package:mynotes/services/crud/patient_service.dart';
 
 import '../../constants/routes.dart';
 import '../../enums/menu_action.dart';
 import '../../services/auth/auth_service.dart';
 import 'notes_view.dart';
 
-class ItemView extends StatelessWidget {
-  const ItemView({super.key, required this.clinicItem});
+class ExistingPatientView extends StatelessWidget {
+  const ExistingPatientView({super.key, required this.patient});
 
-  final ClinicItem clinicItem;
+  final PatientRecord patient;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(clinicItem.itemName),
+          title: Text('${patient.first_name} ${patient.surname}'),
           actions: [
             PopupMenuButton<MenuAction>(
               onSelected: (value) async {
@@ -41,6 +42,6 @@ class ItemView extends StatelessWidget {
             )
           ],
         ),
-        body: Text(clinicItem.itemName));
+        body: Text(patient.first_name));
   }
 }
