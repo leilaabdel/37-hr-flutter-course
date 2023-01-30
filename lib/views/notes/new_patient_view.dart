@@ -269,7 +269,7 @@ class NewPatientFromState extends State<NewPatientFrom> {
                           context: context,
                           initialDate: DateTime.now(),
                           firstDate: DateTime(
-                              2000), //DateTime.now() - not to allow to choose before today.
+                              1900), //DateTime.now() - not to allow to choose before today.
                           lastDate: DateTime(2101));
 
                       if (pickedDate != null) {
@@ -425,7 +425,7 @@ class NewPatientFromState extends State<NewPatientFrom> {
                           context: context,
                           initialDate: DateTime.now(),
                           firstDate: DateTime(
-                              2000), //DateTime.now() - not to allow to choose before today.
+                              1900), //DateTime.now() - not to allow to choose before today.
                           lastDate: DateTime(2101));
 
                       if (pickedDate != null) {

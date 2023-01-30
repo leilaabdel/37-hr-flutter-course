@@ -61,7 +61,7 @@ class _SupplyViewState extends State<SupplyView> {
                 controller: _controller,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.search),
-                  hintText: "Enter Document Info",
+                  hintText: "Enter Supply Info",
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20)),
                 ),
@@ -91,7 +91,7 @@ class _SupplyViewState extends State<SupplyView> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: ListTile(
-            title: Text(data.itemName),
+            title: Text("${data.itemName} ${data.size ?? ""}"),
             trailing: Text(data.amount.toString()),
             onTap: () {
               print(data);

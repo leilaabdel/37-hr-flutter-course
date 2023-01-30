@@ -32,8 +32,8 @@ class PatientService {
   late final StreamController<List<PatientRecord>>
       _patientRecordsStreamController;
 
-  Future<PatientRecord> updateNote({
-    required PatientRecord patient,
+  Future<void> updatePatient({
+    required PatientCloudRecord patient,
   }) async {
     await _ensureDBIsOpen();
     final db = _getDatabaseOrThrow();
@@ -65,11 +65,11 @@ class PatientService {
     if (updatesCount == 0) {
       throw CouldNotUpdateNote();
     } else {
+      print("UPDATED THE PATIENT ${updatesCount}");
       final updatedItem = await getItem(id: patient.id);
       _patientRecords.removeWhere((item) => item.id == updatedItem.id);
       _patientRecords.add(updatedItem);
       _patientRecordsStreamController.add(_patientRecords);
-      return updatedItem;
     }
   }
 
@@ -140,12 +140,12 @@ class PatientService {
   Future<PatientRecord> getItem({required String id}) async {
     _ensureDBIsOpen();
     final db = _getDatabaseOrThrow();
-    final clinicItems = await db.query(patientRecordsTable,
+    final patientRecords = await db.query(patientRecordsTable,
         where: 'id = ?', whereArgs: [id], limit: 1);
-    if (clinicItems.isEmpty) {
+    if (patientRecords.isEmpty) {
       throw CouldNotFindNote();
     } else {
-      final clinicItem = PatientRecord.fromRow(clinicItems.first);
+      final clinicItem = PatientRecord.fromRow(patientRecords.first);
       _patientRecords.removeWhere((clinicItem) => clinicItem.id == id);
       _patientRecords.add(clinicItem);
       _patientRecordsStreamController.add(_patientRecords);
@@ -253,10 +253,10 @@ class PatientRecord {
         address_of_next_of_kin = map[addressOfNextOfKinColumn] as String?,
         age = map[ageColumn] as int?,
         contact = map[contactColumn] as String?,
-        date_of_first_attendance = DateTime.fromMillisecondsSinceEpoch(
+        date_of_first_attendance = DateTime.fromMicrosecondsSinceEpoch(
             (map[dateOfFirstAttendanceColumn] as int?) ??
                 DateTime.now().microsecondsSinceEpoch),
-        dob = DateTime.fromMillisecondsSinceEpoch(
+        dob = DateTime.fromMicrosecondsSinceEpoch(
             (map[dobColumn] as int?) ?? DateTime.now().microsecondsSinceEpoch),
         first_name = map[firstNameColumn] as String,
         surname = map[surnameColumn] as String,
